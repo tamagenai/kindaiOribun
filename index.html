@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中国語作文</title>
+
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+  <style>
+    .header {
+      position: fixed;
+      top: 0px;
+      left: 0px;
+      z-index: 10;
+      background-color: lemonchiffon;
+      width: 100%;
+
+
+    }
+
+    .header2 {
+
+      display: flex;
+    }
+
+    .linkurl {
+      margin-left: auto;
+    }
+
+    #flash {
+      display: inline-block;
+      width: 170px;
+      height: 40px;
+      cursor: pointer;
+      background-color: skyblue;
+      text-decoration: none;
+      text-align: center;
+      line-height: 50px;
+      border-radius: 6px
+    }
+
+    #subject {
+      margin-top: 180px;
+    }
+
+    .dataContent {
+      /* padding-top: 180px; */
+      display: block;
+    }
+
+    .dataNone {
+      display: none;
+    }
+
+    .clkBtn {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .divFlex {
+      display: flex;
+    }
+
+    .sheetSelect {
+      padding-top: 0px;
+    }
+
+    .speed {
+      padding-top: 0px;
+    }
+
+
+    .dataDisplay {
+      display: block;
+    }
+
+    .dataNone {
+      display: none;
+    }
+
+    .mSakubunNoDisplay {
+      display: none;
+    }
+
+    
+    .sakubunSave {
+      display: inline-block;
+      background-color: cyan;
+      border-radius: 20%;
+      width: 70px;
+      height: 60px;
+      text-align: center;
+      line-height: 30px;
+      margin-right: 10px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 4px #7a0000;
+      font-size: 16px;
+
+    }
+
+    .sakubunSave:active {
+      box-shadow: 0 1px #7a0000;
+      transform: translateY(3px);
+    }
+
+
+    .mSakubunBtn {
+      
+      margin-left: 10px;
+      cursor: pointer;
+      user-select: none;
+
+
+    }
+
+    textarea {
+      min-height: 130px;
+      max-height: 200px;
+      min-width: 340px;
+      min-width: 340px;
+    }
+    .sakubunButtonArea {
+      display: flex;
+    }
+    .status {
+      font-size: 14px;
+    }
+    .statusNodisplay {
+      display: none;
+    }
+    .loading {
+      position: fixed;
+      top: 100px;
+      left: 100px;
+      z-index: 99;
+      content: '';
+      display: block;
+      margin: auto;
+      width: 300px;
+      border: 4px solid #ccc;
+      border-right-color: #0AC;
+      border-radius: 100px;
+      width: 30px;
+      height: 30px;
+      background-color: white;
+      animation: rotation 0.6s linear infinite;
+    }
+
+    @keyframes rotation {
+      from {
+        transform: rotate(0);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px);
+
+      }
+
+      100% {
+        opacity: 1;
+        transform: none;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+  <div id="kurukuru" class="loading"></div>
+  <div class="header">
+    <div class="header2">
+
+      <h1>中国語　作文</h1>
+      <div class="linkurl">
+        <!-- <a id="flash" href="https://hidekitakazawa.github.io/roudokuCyugokugoTangocard/" target="_blank">朗読カード</a> -->
+        <!-- <a id="ikeda" href="index6.Chinese" target="_blank">使用手引書</a> -->
+
+      </div>
+    </div>
+    <div class="divFlex">
+      <div class="sheetSelect">
+
+        <label for="sheet-select"></label><select id="sheet-select" name="sheetSelect"></select>
+      </div>
+      <div class="speed">
+        <label for="speech-Speed">スピード:</label>
+
+        <select name="speechSpeed" id="speech-Speed">
+          <option value="1.0">1.0</option>
+          <option value="0.9">0.9</option>
+          <option value="0.8">0.8</option>
+          <option value="0.7">0.7</option>
+          <option value="0.6">0.6</option>
+          <option value="0.5">0.5</option>
+          <option value="1.1">1.1</option>
+          <option value="1.2">1.2</option>
+          <option value="1.3">1.3</option>
+          <option value="1.4">1.4</option>
+          <option value="1.5">1.5</option>
+          <option value="1.6">1.6</option>
+          <option value="1.7">1.7</option>
+          <option value="1.8">1.8</option>
+          <option value="1.9">1.9</option>
+          <option value="2.0">2.0</option>
+
+        </select>
+      </div>
+      <div id="mSakubunBtnClick" class="mSakubunBtn">参考文表示</div>
+
+    </div>
+  </div>
+  <div id="main">
+    <p id="subject">課題について中国語で自由に作文してください。</p>
+    <div id="container">
+
+    </div>
+   
+  </div>
+
+  <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+
+  <!-- <script src="./get_post_gss.js"></script> -->
+  <script>
+    // スプレッドシート　列　定数定義
+    const END_POINT = "https://script.google.com/macros/s/AKfycbwztlAwhvqn3oRjCq2OiJFKUu8CsGAynB2DVYvxZByM9A9CjN3eW-INRb_dHecbA_1j/exec";
+
+    let sheetIndex;  // 現在処理中のシートのindex
+
+    const sheetSelector = document.getElementById("sheet-select");
+
+    let container = document.getElementById('container');
+    let mSakubunBtnClick = document.getElementById('mSakubunBtnClick');
+    let subject = document.getElementById('subject');
+    const constSubject = "課題について中国語で自由に作文してください。";
+    let sheetDatas;
+    let sheetNameDatas;
+    let wStatus;  // 音声のstatus
+    let wShowResult;  // 音声の出力結果
+    // Declare webkitSpeechRecognition
+    window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
+    var recognition = new webkitSpeechRecognition();
+
+    // Web Speech API Configuration
+    // Language
+    recognition.lang = 'zh-CN';
+    // Show Progress
+    recognition.interimResults = true;
+    // Continuous recognition
+    recognition.continuous = true;
+
+    //
+    // let onseiStart = document.getElementById('onseiStart');
+
+    // let show_result = document.getElementById('show_result');
+    recognition.onsoundstart = function () {
+
+      wStatus.innerHTML = "Recognizing";
+
+      // document.getElementsByClassName('dataDisplay').querySelector('.status').innerHTML = "Recognizing";
+    };
+    recognition.onnomatch = function () {
+      // document.getElementById('status').innerHTML = "Try again";
+      wStatus.innerHTML = "Try again";
+      // fncOnseiNyuryokuRetry();
+    };
+    recognition.onerror = function (event) {
+      // document.getElementById('status').innerHTML = "ERROR";
+      wStatus.innerHTML = "ERROR";
+      console.log("Speech recognition error detected: " + event.error); console.log("Additional information: " + event.message);
+      // fncOnseiNyuryokuRetry();
+    };
+
+    recognition.onsoundend = function () {
+      // document.getElementById('status').innerHTML = "Stopped";
+      wStatus.innerHTML = "Stopped";
+
+    };
+    function fncOnseiNyuryoku(para1) {
+      if (para1.innerHTML === 'ストップ') {
+        recognition.stop();
+        para1.innerHTML = '音声入力';
+        return;
+      }
+      var classDataContents = document.getElementsByClassName('dataContent');
+      wStatus = classDataContents[sheetIndex].children[2];
+      wShowResult = classDataContents[sheetIndex].children[3];
+     
+      para1.innerHTML = 'ストップ';
+      recognition.start();
+      // this.disabled = true;
+
+    }
+
+    recognition.onresult = function (event) {
+
+      var results = event.results;
+      // show_result.innerHTML = '<div>' + results[0][0].transcript + '</div>';
+
+      for (var i = event.resultIndex; i < results.length; i++) {
+        if (results[i].isFinal) {
+
+          wShowResult.innerHTML += '<div>' + results[i][0].transcript + '</div>';
+
+          // hAnswer = results[i][0].transcript;
+        } else {
+
+        }
+
+
+      }
+    }
+
+
+    // iniCSSSet();
+    //
+    mSakubunBtnClick.addEventListener('click', () => {
+      const mSakubuns = document.querySelectorAll('.mSakubun');
+      if (mSakubunBtnClick.textContent === '参考文表示') {
+        mSakubuns[sheetIndex].classList.remove("mSakubunNoDisplay");
+        mSakubunBtnClick.textContent = '参考文非表示';
+      } else {
+
+        mSakubuns[sheetIndex].classList.add("mSakubunNoDisplay");
+        mSakubunBtnClick.textContent = '参考文表示';
+      }
+
+    })
+
+    var tdOLD;//2023/04/27追加
+    let tdOLDColor;  // 20231223 追
+    // 23-07-04 シートが変更されたときに実行される。----------------------
+
+    let select = document.querySelector('[name="sheetSelect"]');
+
+    select.onchange = event => {
+      var selIndex = select.selectedIndex;
+      sheetIndex = selIndex;
+      console.log(select.selectedIndex);
+      subject.textContent = constSubject;
+      var classElement = document.getElementsByClassName('dataContent');
+      for (let i = 0; i < classElement.length; i++) {
+        if (selIndex === i) {
+
+          classElement[i].classList.remove("dataNone");
+        } else {
+          classElement[i].classList.add("dataNone");
+
+        }
+
+      }
+      localStorageSet(sheetIndex);
+    }
+
+
+    getFromGAS();//起動時のデータ取得
+
+    //----------- 以下、関数定義--------------------------
+
+    function getFromGAS() {
+
+      $.ajax({
+        type: "GET",
+        url: END_POINT,
+        // data: { sheetNo: SHEET_NO }
+
+      }).done((result) => {        // 成功した時の処理
+        console.log("get done:" + result);
+        setSheetNames(JSON.parse(result)[0]);
+        sheetNameDatas = JSON.parse(result)[0];
+        // getFromGAS(1);
+        let xsheetDatas = JSON.parse(result);
+        sheetDatas = cnvSheetDatas(xsheetDatas);
+        renderSheetDatas(sheetDatas);
+
+        iniCSSSet();
+        kurukuru.remove();
+      }).fail((error) => {  // 失敗した時の処理
+        alert('Error:' + JSON.stringify(error));
+
+      }).always((data) => {// 常にやる処理
+        // do something
+        // enableControlElements();
+      });
+    }
+    function setSheetNames(sheetNamesArray) {
+      sheetSelector.innerHTML = "";
+      document.createElement('option')
+      sheetNamesArray.forEach((sheetName, index) => {
+        let option = document.createElement('option');
+        option.setAttribute('value', index + 1);
+        option.innerHTML = sheetName;
+        sheetSelector.appendChild(option);
+      });
+    }
+    //
+    function cnvSheetDatas(xsheetDatas) {
+      let sheetDatas = [];
+      let kbn;
+      for (let i = 1; i < xsheetDatas.length; i++) {
+        let tabSheetData = [];
+        for (let j = 0; j < xsheetDatas[i].length; j++) {
+          let gyou = [xsheetDatas[i][j][0], xsheetDatas[i][j][1]];
+          tabSheetData.push(gyou);
+          //
+          gyou = [' ', xsheetDatas[i][j][2]];
+          tabSheetData.push(gyou);
+          //
+          gyou = [' ', xsheetDatas[i][j][3]];
+          tabSheetData.push(gyou);
+          
+
+
+        }
+        sheetDatas.push(tabSheetData);
+       
+
+
+      }
+      return sheetDatas;
+
+    }
+    //
+    function renderSheetDatas(sheetDatas) {
+      let div, table, tr, td, tbody, button, textarea, divContent, divMsakubun, divButton;
+      let small, micBtn;
+      for (let i = 0; i < sheetDatas.length; i++) {
+        divContent = document.createElement('div');
+        divContent.setAttribute('class', 'dataContent');
+
+        container.appendChild(divContent);
+        //
+        divMsakubun = document.createElement('div');
+        divMsakubun.setAttribute('class', 'mSakubun mSakubunNoDisplay');
+        divContent.appendChild(divMsakubun);
+        table = document.createElement('table');
+        table.setAttribute('border', '1');
+        divMsakubun.appendChild(table);
+        tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+        for (let j = 0; j < sheetDatas[i].length; j++) {
+          tr = document.createElement('tr');
+          for (let k = 1; k < sheetDatas[i][j].length; k++) {
+            td = document.createElement('td');
+            if (sheetDatas[i][j][0] === 'h' || sheetDatas[i][j][0] === 't') {
+  
+              td.textContent = sheetDatas[i][j][k];
+              td.setAttribute('onclick', 'speakData(this)');
+              td.setAttribute('class', 'clkBtn');
+              td.style.backgroundColor = "#fffacd";
+  
+            } else {
+  
+              td.textContent = sheetDatas[i][j][k];
+            }
+
+            tr.appendChild(td);
+          }
+         
+
+
+
+          tbody.appendChild(tr);
+
+          }
+
+
+
+       
+        //
+
+        div = document.createElement('div');
+        div.setAttribute('class', 'sakubunArea');
+        divContent.appendChild(div);
+        textarea = document.createElement('textarea');
+        textarea.setAttribute('onKeyup', 'ShowLength(this)');
+        textarea.setAttribute('class', 'sakubun');
+
+        div.appendChild(textarea);
+        divButton = document.createElement('div');
+        divButton.setAttribute('class', 'sakubunButtonArea');
+        button = document.createElement('button');
+        button.setAttribute('class', 'sakubunSave');
+        button.setAttribute('onClick', 'sakubunSaveClick()');
+        button.innerHTML = '保存';
+        divButton.appendChild(button);
+        //
+        button = document.createElement('button');
+        button.setAttribute('class', 'sakubunSave');
+        button.setAttribute('onClick', 'sakubunCopyClick()');
+        button.innerHTML = 'コピー';
+        divButton.appendChild(button);
+        //
+        button = document.createElement('button');
+        button.setAttribute('class', 'sakubunSave');
+        button.setAttribute('onClick', 'sakubunReadClick()');
+        button.innerHTML = '読み上げ';
+        divButton.appendChild(button);
+        div.appendChild(divButton);
+        //
+        micBtn = document.createElement('button');
+        micBtn.setAttribute('class', 'sakubunSave onseiStart');
+        micBtn.setAttribute('onClick', 'fncOnseiNyuryoku(this)');
+        micBtn.innerHTML = '音声入力';
+        divButton.appendChild(micBtn);
+        div.appendChild(divButton);
+        //
+        small = document.createElement('small');
+        small.setAttribute('class', 'status');
+       
+        divContent.appendChild(small);
+        div = document.createElement('div');
+        div.setAttribute('class', 'show_result');
+        divContent.appendChild(div);
+      }
+
+      }
+
+      //
+
+    function sakubunCopyClick() {
+      const sakubuns = document.querySelectorAll('.sakubun');
+      const sakubun = sakubuns[sheetIndex];
+      navigator.clipboard.writeText(sakubun.value);
+
+    }
+    function sakubunReadClick() {
+      const sakubuns = document.querySelectorAll('.sakubun');
+      const sakubun = sakubuns[sheetIndex];
+      var uttr = new SpeechSynthesisUtterance(sakubun.value);
+      uttr.lang = "zh-CN"
+      uttr.rate = speakSpeedRate();
+      speechSynthesis.cancel();
+      speechSynthesis.speak(uttr);
+
+    }
+    
+    
+    function sakubunSaveClick() {
+      const sakubuns = document.querySelectorAll('.sakubun');
+      const sakubun = sakubuns[sheetIndex];
+      console.log(sakubun.value);
+      console.log(sheetNameDatas[sheetIndex]);
+      let value = sakubun.value;
+      let sheetName = sheetNameDatas[sheetIndex];
+      localStorage.setItem(sheetName, value);
+      
+
+    }
+    function ShowLength(param) {
+      
+      console.log(param.value.length);
+      subject.innerHTML = constSubject + 
+      param.value.length + "文字";
+    }
+    function ShowLength2(value) {
+      if (value === null) {return;}
+      console.log(value.length);
+      subject.innerHTML = constSubject + 
+      value.length + "文字";
+    }
+
+    //
+    function speakData(param1, param2) {
+
+      // if (param1 instanceof HTMLTableCellElement) {
+      const td = param1;
+      //2023/04/27 追加　背景色
+      if (tdOLD === undefined) {
+        tdOLD = param1;
+        tdOLDColor = tdOLD.style.backgroundColor;
+      } else {
+        tdOLD.style.backgroundColor = tdOLDColor;
+        tdOLD = param1;
+      }
+      //2023/04/27 追加　背景色
+      td.style.backgroundColor = 'cyan';//2023/04/27追加　背景色　変更可能
+      var uttr = new SpeechSynthesisUtterance(td.textContent);
+      uttr.lang = "zh-CN"
+      uttr.rate = speakSpeedRate();
+      speechSynthesis.cancel();
+      speechSynthesis.speak(uttr);
+
+      // }
+
+    }
+
+    // イニシャル　CSS セット　　最初のシートをイニシャル画面にする。
+    function iniCSSSet() {
+      sheetIndex = 0;
+      var classElement = document.getElementsByClassName('dataContent');
+      for (let i = 1; i < classElement.length; i++) {
+        classElement[i].classList.add("dataNone");
+      }
+      // 
+      localStorageSet(sheetIndex);
+      
+      
+    }
+    function localStorageSet(sheetIndex) {
+      let sheetName = sheetNameDatas[sheetIndex];
+      let value = localStorage.getItem(sheetName);
+      console.log(`localStorageSet sheetName=${sheetName} value=${value}`);
+      if (value === undefined) {
+        return;
+      }  
+      const sakubuns = document.querySelectorAll('.sakubun');
+      const sakubun = sakubuns[sheetIndex];
+      sakubun.value = value;
+      ShowLength2(value);
+
+    }
+    // speak speed 調整 2023-07-04
+    function speakSpeedRate() {
+
+      let select = document.querySelector('[name="speechSpeed"]');
+
+      var rate = parseFloat(select.selectedOptions[0].value);
+      return rate;
+
+    }
+
+
+
+
+  </script>
+</body>
+
+</html>
